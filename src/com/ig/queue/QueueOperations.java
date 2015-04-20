@@ -2,6 +2,8 @@ package com.ig.queue;
 
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -88,7 +90,49 @@ public class QueueOperations {
 		  }
 	 }
 	 
-	 public void getList() throws JMSException, NamingException, MalformedObjectNameException, OpenDataException,MalformedURLException
+	 public ArrayList<String> getList()
+			 throws JMSException, NamingException, MalformedObjectNameException, OpenDataException,MalformedURLException
+	 {
+		 QueueConnectionFactory connectionFactory = (QueueConnectionFactory) new  
+				 ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_BROKER_URL);
+		  Connection connection = connectionFactory.createConnection();
+		  
+		  try{
+		  connection.start();
+
+		  // Creating session for seding messages
+		  Session session = connection.createSession(false,
+		    Session.AUTO_ACKNOWLEDGE);
+
+		  // Getting the queue
+		  		  
+		  Queue queue = (Queue) jndi.lookup("GCDQ");
+		  QueueBrowser qBrowser = session.createBrowser(queue);
+		  
+		  Enumeration msgs = qBrowser.getEnumeration();
+			ArrayList<String> list = new ArrayList<String>();
+	 		if ( !msgs.hasMoreElements() ) { 
+			    return null;
+			} else { 
+			    while (msgs.hasMoreElements()) { 
+			        Message tempMsg = (Message)msgs.nextElement();
+			        try{
+			        	String text = ((TextMessage)tempMsg).getText();
+			        	list.add(text);
+			        } catch(NumberFormatException e) {
+			        	return null;
+			        }
+			    }
+			}
+			return list;
+		  
+		  }
+		  finally{
+		  connection.close();
+		  }
+	}
+	 
+	 public int gcd() throws JMSException, NamingException, MalformedObjectNameException, OpenDataException,MalformedURLException
 	 {
 		 ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_BROKER_URL);
 		  Connection connection = connectionFactory.createConnection();
@@ -102,10 +146,7 @@ public class QueueOperations {
 
 		  // Getting the queue
 		  Destination destination = session.createQueue("GCDQ");
-		  
-		  ObjectName mbeanNameQueue = new ObjectName("org.apache.activemq:type=Broker,brokerName=static-broker1,destinationType=Queue,destinationName=GCDQ");
-		  org.apache.activemq.broker.jmx.QueueViewMBean queueView = JMX.newMBeanProxy(connect(), mbeanNameQueue, org.apache.activemq.broker.jmx.QueueViewMBean.class);
-		  System.out.println(queueView.browseAsTable());
+
 		  
 		  // MessageConsumer is used for receiving (consuming) messages
 		  MessageConsumer consumer = session.createConsumer(destination);
@@ -127,8 +168,9 @@ public class QueueOperations {
 		  }
 		  finally{
 		  connection.close();
+		  return 0;
 		  }
-		 }
+	}
 	 
 	 public static void main(String[] args) throws JMSException {
 		 try {
@@ -145,33 +187,5 @@ public class QueueOperations {
 	 }
 	 
 	 
-	 public MBeanServerConnection connect() 
-		         {
-		        JMXConnector connector = null;
-		        MBeanServerConnection connection = null;
-
-		        String username = "admin";
-
-		        String password = "admin";
-
-		        Map env = new HashMap();
-		        String[] credentials = new String[] { username, password };
-		        env.put(JMXConnector.CREDENTIALS, credentials);
-
-		        try {
-		            connector = JMXConnectorFactory.newJMXConnector(new 
-		JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi"), env);
-		            connector.connect();
-		            connection = connector.getMBeanServerConnection();
-		        } catch (MalformedURLException e) {
-		            // TODO Auto-generated catch block
-		            e.printStackTrace();
-		        } catch (Exception e) {
-		            // TODO Auto-generated catch block
-		            e.printStackTrace();
-		        }
-		        
-		        return connection; 
-		    }
 	
 }

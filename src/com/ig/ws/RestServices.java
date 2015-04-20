@@ -46,17 +46,15 @@ public class RestServices {
 	@Path("/list") 
 	@Produces(MediaType.TEXT_PLAIN)
 	public String list() {
-		List<Integer> list = new ArrayList<Integer>();
-		list.add(34);
-		list.add(23453);
-		list.add(435);
-		list.add(656);
-		
+		List<String> list = new ArrayList<String>();
+				
 		try{
 			QueueOperations queue = new QueueOperations();
-			queue.getList();
+			list = queue.getList();
 			}catch(Exception ex){
-				return "Error in pushing to queue.";
+				ex.printStackTrace();
+				return "Error in getting list from queue.";
+				
 			}
 
 	return list.toString();
