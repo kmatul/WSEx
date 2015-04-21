@@ -28,7 +28,7 @@ public class RestServices {
 	public String push(@PathParam("i") int i, @PathParam("j") int j) {
 		
 		try{
-		QueueOperations queue = new QueueOperations();
+			QueueOperations queue = new QueueOperations();
 		queue.pushToQueue(i, j);
 		}catch(Exception ex){
 			System.out.println("EX:::"+ex);
@@ -58,6 +58,23 @@ public class RestServices {
 			}
 
 	return list.toString();
+	}
+	
+	@GET 
+	@Path("/gcd") 
+	@Produces(MediaType.TEXT_PLAIN)
+	public String gcd() {
+			int gcdVal = 0;			
+		try{
+			QueueOperations queue = new QueueOperations();
+			gcdVal = queue.gcd();
+			}catch(Exception ex){
+				ex.printStackTrace();
+				return String.valueOf(-1);
+				
+			}
+
+	return String.valueOf(gcdVal);
 	}
 
 }

@@ -22,3 +22,23 @@ use:
 
 It will return list of current values in the queue.
 
+
+3.public int gcd():
+
+Use SOAP UI to test it
+
+
+4.public List<Integer> gcdList():
+
+
+Use SOAP UI to test it
+
+5.public int gcdSum():
+
+Use SOAP UI to test it
+
+
+Soap:
+
+WSDL:
+http://<server-ip>:8080/RESTEx/services/GCD?wsdl
