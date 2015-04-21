@@ -1,5 +1,6 @@
 Project -: Unico WebService Example
-Dependencies -: Active MQ libs, JBoss EAP 6.2, Jersy libs
+Dependencies -: Active MQ 5.11.1 libs, JBoss EAP 6.2, Jersy 1.8 libs
+Provided : Unico.ear file to be deployed on JBoss.
 
 
 Rest Services
